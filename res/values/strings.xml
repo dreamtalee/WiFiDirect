@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WiFiDirect</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="scan">Scan nearby devices</string>
+    <string name="getpass">Get password!</string>
+    <string name="test">Support WiFi Direct ?</string>
+    
+    <string name="nodevice">No devices</string>
+    <string name="nodeviceavail">No device available now.</string>
+    <string name="servicebusy">WiFi direct service busy, please try again later.</string>
+    <string name="notsupport">WiFi direct is not supported.</string>
+    <string name="connectfail">Connect to device failed.</string>
+    <string name="servicedisabled">The WiFi direct is disabled</string>
+    
+    <!-- device status --> 
+    <string name="status_connected">CONNECTED</string>
+    <string name="status_invalid">INVITED</string>
+    <string name="status_failed">FAILED</string>
+    <string name="status_avail">AVAILABLE</string>
+    <string name="status_unavail">UNAVAILABLE</string>
+</resources>
