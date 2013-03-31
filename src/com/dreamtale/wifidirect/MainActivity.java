@@ -2,6 +2,9 @@ package com.dreamtale.wifidirect;
 
 import java.util.ArrayList;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,6 +28,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -34,7 +40,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dreamtale.wifidirect.broadcast.WiFiDirectReceiver;
+import com.dreamtale.wifidirect.entity.ChatItem;
 import com.dreamtale.wifidirect.interfaces.IWifiP2pListener;
+import com.dreamtale.wifidirect.widget.ChatAdapter;
 import com.dreamtale.wifidirect.widget.DeviceAdapter;
 
 /**
@@ -69,8 +77,9 @@ public class MainActivity extends Activity implements ChannelListener,
     private ProgressBar mLoadingBar = null;
     private TextView mInfoView = null;
     private ListView mDeviceListView = null;
+    private ListView mChatListView = null;
     private Button mGetPassBtn = null;
-    private Button mVerifyBtn = null;
+    private Button mStartChat = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -84,10 +93,11 @@ public class MainActivity extends Activity implements ChannelListener,
         mInfoView = (TextView) findViewById(R.id.infoview);
         mDeviceListView = (ListView) findViewById(R.id.devicelist);
         mDeviceListView.setOnItemClickListener(this);
+        mChatListView = (ListView) findViewById(R.id.chatlist);
         mGetPassBtn = (Button) findViewById(R.id.passbtn);
         mGetPassBtn.setOnClickListener(this);
-        mVerifyBtn = (Button) findViewById(R.id.verifybtn);
-        mVerifyBtn.setOnClickListener(this);
+        mStartChat = (Button) findViewById(R.id.startchat);
+        mStartChat.setOnClickListener(this);
 
         initWifiDirect();
     }
@@ -157,11 +167,8 @@ public class MainActivity extends Activity implements ChannelListener,
                 builder.setTitle("Warning").setMessage("No successed connection.").create().show();
             }
             break;
-        case R.id.verifybtn:
-            boolean support = getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT);
-            String message = support ? "The device support WiFi Direct." : "The device doesn't support WiFi Direct.";
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Information").setMessage(message).create().show();
+        case R.id.startchat:
+            startChat();
         default:
             break;
         }
@@ -429,6 +436,23 @@ public class MainActivity extends Activity implements ChannelListener,
             }
         }
     }
+    
+    private void verifyWiFiDirect()
+    {
+        boolean support = getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT);
+        String message = support ? "The device support WiFi Direct." : "The device doesn't support WiFi Direct.";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Information").setMessage(message).create().show();
+    }
+    
+    private void startChat()
+    {
+        mScanBtn.setVisibility(View.GONE);
+        mGetPassBtn.setVisibility(View.GONE);
+        mStartChat.setVisibility(View.GONE);
+        mChatListView.setAdapter(new ChatAdapter(this, dumyChatInfo()));
+        flip();
+    }
 
     @Override
     public void onGroupInfoAvailable(WifiP2pGroup group)
@@ -440,5 +464,55 @@ public class MainActivity extends Activity implements ChannelListener,
             mpassword.delete(0, mpassword.length() - 1);
         }
         mpassword.append(group.getPassphrase());
+    }
+    
+    private Interpolator accelerator = new AccelerateInterpolator();
+    private Interpolator decelerator = new DecelerateInterpolator();
+
+    private void flip()
+    {
+        final ListView visibleList;
+        final ListView invisibleList;
+        if (mDeviceListView.getVisibility() == View.GONE)
+        {
+            visibleList = mChatListView;
+            invisibleList = mDeviceListView;
+        }
+        else
+        {
+            invisibleList = mChatListView;
+            visibleList = mDeviceListView;
+        }
+        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(visibleList,
+                "rotationY", 0f, 90f);
+        visToInvis.setDuration(500);
+        visToInvis.setInterpolator(accelerator);
+        final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(invisibleList,
+                "rotationY", -90f, 0f);
+        invisToVis.setDuration(500);
+        invisToVis.setInterpolator(decelerator);
+        visToInvis.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator anim)
+            {
+                visibleList.setVisibility(View.GONE);
+                invisToVis.start();
+                invisibleList.setVisibility(View.VISIBLE);
+            }
+        });
+        visToInvis.start();
+    }
+    
+    private ArrayList<ChatItem> dumyChatInfo()
+    {
+        ArrayList<ChatItem> list = new ArrayList<ChatItem>();
+        for (int i = 0; i < 3; i++)
+        {
+            ChatItem item = new ChatItem();
+            item.setContent("Hello");
+            list.add(item);
+        }
+        return list;
     }
 }

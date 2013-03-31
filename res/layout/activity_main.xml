@@ -24,7 +24,7 @@
         />
     
     <Button 
-        android:id="@+id/verifybtn"
+        android:id="@+id/startchat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/passbtn"
@@ -35,8 +35,15 @@
         android:id="@+id/devicelist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scanbtn"
+        android:layout_below="@id/startchat"
         android:visibility="invisible" />
+    
+    <ListView 
+        android:id="@+id/chatlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
         
     <ProgressBar
         android:id="@+id/loadingbar"

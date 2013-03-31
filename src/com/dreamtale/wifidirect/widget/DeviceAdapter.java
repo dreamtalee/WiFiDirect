@@ -56,8 +56,8 @@ public class DeviceAdapter extends BaseAdapter
         {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.deviceitem, null);
             viewHolder = new ViewHolder();
-            viewHolder.mNameView = (TextView) convertView.findViewById(R.id.devicename);
-            viewHolder.mStatusView = (TextView) convertView.findViewById(R.id.devicestatus);
+            viewHolder.nameView = (TextView) convertView.findViewById(R.id.devicename);
+            viewHolder.statusView = (TextView) convertView.findViewById(R.id.devicestatus);
             convertView.setTag(viewHolder);
         }
         else
@@ -68,8 +68,8 @@ public class DeviceAdapter extends BaseAdapter
         WifiP2pDevice device = mDeviceList.get(position);
         if (null != device)
         {
-            viewHolder.mNameView.setText(device.deviceName  + "  mac: " + device.deviceAddress);
-            viewHolder.mStatusView.setText(getStatusStr(device.status));
+            viewHolder.nameView.setText(device.deviceName  + "  mac: " + device.deviceAddress);
+            viewHolder.statusView.setText(getStatusStr(device.status));
         }
         
         return convertView;
@@ -103,7 +103,7 @@ public class DeviceAdapter extends BaseAdapter
 
     static class ViewHolder
     {
-        TextView mNameView;
-        TextView mStatusView;
+        TextView nameView;
+        TextView statusView;
     }
 }

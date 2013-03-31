@@ -6,7 +6,7 @@
     
     <string name="scan">Scan nearby devices</string>
     <string name="getpass">Get password!</string>
-    <string name="test">Support WiFi Direct ?</string>
+    <string name="test">Start chat</string>
     
     <string name="nodevice">No devices</string>
     <string name="nodeviceavail">No device available now.</string>
